@@ -12,7 +12,7 @@ then
     exit 1
 fi
 
-# Sample output:
+# Sample output from git diff -p:
 # diff --git a/README.md b/README.md
 # old mode 100644
 # new mode 100755
