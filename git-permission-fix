@@ -5,26 +5,19 @@
 # ona repository which is not considered dirty, so you must clear any
 # core.fileMode flag which may conceal such changes.
 
-# git diff -p --quiet will return success when there are NO changes
-if git diff -p --quiet
+CHANGES=0
+while read permission file
+do
+    current_permission=$(stat -c "%a" $file)
+    if [ "${current_permission}" != "${permission}" ]
+    then
+        chmod $permission $file
+        CHANGES=1
+    fi
+done < <(git ls-tree -r HEAD | awk ' $2 == "blob" { sub("100", "", $1); print $1 " " $NF } ')
+
+if [ $CHANGES -eq 0 ]
 then
     echo "No bad permissions found" >&2
     exit 1
 fi
-
-# Sample output from git diff -p:
-# diff --git a/README.md b/README.md
-# old mode 100644
-# new mode 100755
-
-# It's bad to execute it twice, but the $output has squished the newlines
-git diff -p | perl -ne '
-    chomp;
-    if ( /^diff/ ) {
-        $_ =~ s#^.* b/##;
-        $file = $_;
-    } elsif ( /^old mode/ ) {
-        $_ =~ s/old mode 10//;
-        chmod oct($_), $file;
-    }
-'
