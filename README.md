@@ -10,6 +10,10 @@ Installation
 
 Clone the repository and put git-permission-fix in a folder on your path, or add the repository folder to your path.
 
+You can also install this using [antigen](https://github.com/zsh-users/antigen), like so:
+
+    antigen-bundle matthewfranglen/git-permission-fix
+
 Useage
 ------
 
