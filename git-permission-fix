@@ -11,6 +11,7 @@ do
     current_permission=$(stat -c "%a" $file)
     if [ "${current_permission}" != "${permission}" ]
     then
+        echo "Fixing permissions on $file"
         chmod $permission $file
         CHANGES=1
     fi
