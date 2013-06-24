@@ -5,8 +5,8 @@
 # ona repository which is not considered dirty, so you must clear any
 # core.fileMode flag which may conceal such changes.
 
-output=$(git diff -p)
-if [ -z "$output" ]
+# git diff -p --quiet will return success when there are NO changes
+if git diff -p --quiet
 then
     echo "No bad permissions found" >&2
     exit 1
