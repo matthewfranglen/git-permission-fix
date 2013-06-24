@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# This will check the permissions of the files that are considered
+# dirty, restoring them if they have changed. This will have no effect
+# ona repository which is not considered dirty, so you must clear any
+# core.fileMode flag which may conceal such changes.
+
+# git diff -p --quiet will return success when there are NO changes
+if git diff -p --quiet
+then
+    echo "No bad permissions found" >&2
+    exit 1
+fi
+
+# Sample output from git diff -p:
+# diff --git a/README.md b/README.md
+# old mode 100644
+# new mode 100755
+
+# It's bad to execute it twice, but the $output has squished the newlines
+git diff -p | perl -ne '
+    chomp;
+    if ( /^diff/ ) {
+        $_ =~ s#^.* b/##;
+        $file = $_;
+    } elsif ( /^old mode/ ) {
+        $_ =~ s/old mode 10//;
+        chmod oct($_), $file;
+    }
+'
